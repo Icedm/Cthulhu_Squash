@@ -1,0 +1,20 @@
+# Visual Studio / .NET artifacts
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.vspscc
+
+# Rider
+.idea/
+
+# Resharper
+*.DotSettings.user
+
+# Publish outputs
+publish/
+
+# OS files
+Thumbs.db
+.DS_Store

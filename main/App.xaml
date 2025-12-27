@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Application x:Class="CthulhuSquish.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="MainWindow.xaml">
+  <Application.Resources>
+    <LinearGradientBrush x:Key="AppBackground" StartPoint="0,0" EndPoint="1,1">
+      <GradientStop Color="#05120E" Offset="0" />
+      <GradientStop Color="#08281A" Offset="1" />
+    </LinearGradientBrush>
+
+    <SolidColorBrush x:Key="PanelBackground" Color="#042018" />
+    <SolidColorBrush x:Key="PanelSurface" Color="#0A3726" />
+    <SolidColorBrush x:Key="PanelBorder" Color="#123826" />
+    <SolidColorBrush x:Key="AccentBrush" Color="#39D98A" />
+    <SolidColorBrush x:Key="SubtleText" Color="#BDECD7" />
+
+    <!-- UI Font -->
+    <FontFamily x:Key="UiFont">Segoe UI</FontFamily>
+    <FontFamily x:Key="DisplayFont">Gabriola, Segoe Print, Segoe UI</FontFamily>
+
+    <!-- Primary button style (rounded, gradient, hover/pressed) -->
+    <Style x:Key="PrimaryButton" TargetType="Button">
+      <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+      <Setter Property="FontSize" Value="16" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Foreground" Value="White" />
+      <Setter Property="Padding" Value="10,6" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Background">
+        <Setter.Value>
+          <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#3EE29A" Offset="0" />
+            <GradientStop Color="#27B56E" Offset="1" />
+          </LinearGradientBrush>
+        </Setter.Value>
+      </Setter>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="10" SnapsToDevicePixels="True">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True" />
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="bd" Property="Opacity" Value="0.95" />
+              </Trigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Setter TargetName="bd" Property="RenderTransform">
+                  <Setter.Value>
+                    <ScaleTransform ScaleX="0.98" ScaleY="0.98" />
+                  </Setter.Value>
+                </Setter>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <!-- Panel shadow style -->
+    <Style x:Key="PanelShadow" TargetType="Border">
+      <Setter Property="Effect">
+        <Setter.Value>
+          <DropShadowEffect BlurRadius="24" ShadowDepth="8" Opacity="0.45" />
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <!-- Sprite image glow style -->
+    <Style x:Key="SpriteImageStyle" TargetType="Image">
+      <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+      <Setter Property="Effect">
+        <Setter.Value>
+          <DropShadowEffect Color="#39D98A" BlurRadius="18" ShadowDepth="0" Opacity="0.9" />
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <Style x:Key="ScoreTextStyle" TargetType="TextBlock">
+      <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+      <Setter Property="FontSize" Value="30" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+      <Setter Property="HorizontalAlignment" Value="Center" />
+      <Setter Property="Margin" Value="0,8,0,8" />
+    </Style>
+
+    <!-- Info card visuals for score/time boxes -->
+    <SolidColorBrush x:Key="InfoCardAccent" Color="#39D98A" />
+
+    <LinearGradientBrush x:Key="InfoCardBackground" StartPoint="0,0" EndPoint="0,1">
+      <GradientStop Color="#0F2E2A" Offset="0" />
+      <GradientStop Color="#083026" Offset="1" />
+    </LinearGradientBrush>
+
+    <Style x:Key="InfoCardBorderStyle" TargetType="Border">
+      <Setter Property="CornerRadius" Value="10" />
+      <Setter Property="Padding" Value="8" />
+      <Setter Property="Background" Value="{StaticResource InfoCardBackground}" />
+      <Setter Property="BorderBrush" Value="{StaticResource PanelBorder}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="Effect">
+        <Setter.Value>
+          <DropShadowEffect BlurRadius="12" ShadowDepth="2" Opacity="0.18" />
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <Style x:Key="InfoCardSmallLabel" TargetType="TextBlock">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Foreground" Value="{StaticResource SubtleText}" />
+    </Style>
+
+    <!-- Vignette to darken edges and focus center -->
+    <RadialGradientBrush x:Key="VignetteBrush" Center="0.5,0.45" GradientOrigin="0.5,0.45" RadiusX="0.9" RadiusY="0.9">
+      <GradientStop Color="#00000000" Offset="0.0" />
+      <GradientStop Color="#00000000" Offset="0.65" />
+      <GradientStop Color="#22000000" Offset="0.85" />
+      <GradientStop Color="#55000000" Offset="1.0" />
+    </RadialGradientBrush>
+
+    <!-- Soft center bloom to add glow around play area -->
+    <RadialGradientBrush x:Key="CenterBloom" Center="0.5,0.38" GradientOrigin="0.5,0.38" RadiusX="0.45" RadiusY="0.32">
+      <GradientStop Color="#40FFFFFF" Offset="0.0" />
+      <GradientStop Color="#10FFFFFF" Offset="0.6" />
+      <GradientStop Color="#00FFFFFF" Offset="1.0" />
+    </RadialGradientBrush>
+  </Application.Resources>
+</Application>

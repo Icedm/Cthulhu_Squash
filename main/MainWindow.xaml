@@ -1,0 +1,128 @@
+<Window x:Class="CthulhuSquish.MainWindow"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Title="Cthulhu Squish" Height="720" Width="480"
+  Background="{StaticResource AppBackground}" FontFamily="{StaticResource UiFont}">
+
+  <Grid>
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+      <Border CornerRadius="16" Background="{StaticResource PanelBackground}" Padding="18" Width="420" Height="660">
+        <Border.Effect>
+          <DropShadowEffect BlurRadius="24" ShadowDepth="8" Opacity="0.45" />
+        </Border.Effect>
+
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
+
+          <!-- Vignette overlay (beneath overlays) -->
+          <Rectangle Grid.RowSpan="3" Fill="{StaticResource VignetteBrush}" IsHitTestVisible="False" />
+
+          <Grid Grid.Row="0" Margin="0,2,0,0">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Style="{StaticResource InfoCardBorderStyle}" Margin="6">
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="48" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center">
+                  <Ellipse Width="44" Height="44" Fill="{StaticResource InfoCardAccent}" />
+                  <TextBlock Text="★" FontSize="18" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2" />
+                </Grid>
+
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0">
+                  <TextBlock Text="SCORE" Style="{StaticResource InfoCardSmallLabel}" />
+                  <TextBlock x:Name="ScoreText" Style="{StaticResource ScoreTextStyle}" Text="0" RenderTransformOrigin="0.5,0.5">
+                    <TextBlock.RenderTransform>
+                      <ScaleTransform ScaleX="1" ScaleY="1" />
+                    </TextBlock.RenderTransform>
+                  </TextBlock>
+                </StackPanel>
+              </Grid>
+            </Border>
+
+            <Border Grid.Column="1" Style="{StaticResource InfoCardBorderStyle}" Margin="6">
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="48" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center">
+                  <Ellipse Width="44" Height="44" Fill="#FF8DD8A6" />
+                  <TextBlock Text="⏱" FontSize="16" FontWeight="Bold" Foreground="#083026" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2" />
+                </Grid>
+
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0">
+                  <TextBlock Text="TIME" Style="{StaticResource InfoCardSmallLabel}" />
+                  <TextBlock x:Name="TimeText" Style="{StaticResource ScoreTextStyle}" Text="30" RenderTransformOrigin="0.5,0.5">
+                    <TextBlock.RenderTransform>
+                      <ScaleTransform ScaleX="1" ScaleY="1" />
+                    </TextBlock.RenderTransform>
+                  </TextBlock>
+                </StackPanel>
+              </Grid>
+            </Border>
+          </Grid>
+
+          <Border Grid.Row="1" CornerRadius="12" Background="{StaticResource PanelSurface}" BorderBrush="{StaticResource PanelBorder}" BorderThickness="1" Margin="0,10,0,0" Padding="10">
+            <Grid>
+              <Canvas x:Name="GameCanvas" Background="Transparent" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                <!-- soft center bloom behind everything in the play area -->
+                <Rectangle IsHitTestVisible="False" Opacity="0.9">
+                  <Rectangle.Fill>
+                    <StaticResource ResourceKey="CenterBloom" />
+                  </Rectangle.Fill>
+                  <Rectangle.Width>
+                    <Binding ElementName="GameCanvas" Path="ActualWidth" />
+                  </Rectangle.Width>
+                  <Rectangle.Height>
+                    <Binding ElementName="GameCanvas" Path="ActualHeight" />
+                  </Rectangle.Height>
+                </Rectangle>
+
+                <Image x:Name="CthulhuImage" Width="75" Height="75" Cursor="Hand" Visibility="Hidden" Style="{StaticResource SpriteImageStyle}" />
+              </Canvas>
+
+              <Border x:Name="StartOverlay" Background="#CC071428" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Center" Width="320" Height="260">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                  <TextBlock Text="Cthulhu Squish" FontFamily="{StaticResource DisplayFont}" FontSize="34" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" Margin="0,6,0,6" />
+                  <TextBlock Text="Tap the monster as it appears — get the highest score!" TextWrapping="Wrap" Foreground="{StaticResource SubtleText}" Margin="18" HorizontalAlignment="Center" TextAlignment="Center"/>
+                  <Button x:Name="StartButton" Content="Start Game" Width="160" Height="44" Margin="0,12,0,0" HorizontalAlignment="Center" Style="{StaticResource PrimaryButton}" />
+                </StackPanel>
+              </Border>
+
+              <!-- Round2 overlay replaces the small banner: pause game and prompt player -->
+              <Border x:Name="Round2Overlay" Background="#CC071428" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Center" Width="320" Height="260" Visibility="Collapsed">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                  <TextBlock Text="Round 2" FontFamily="{StaticResource DisplayFont}" FontSize="28" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" Margin="0,6,0,6" />
+                  <TextBlock Text="Get ready — faster Cthulhu incoming!" TextWrapping="Wrap" Foreground="{StaticResource SubtleText}" Margin="18" HorizontalAlignment="Center" TextAlignment="Center"/>
+                  <Button x:Name="StartRound2Button" Content="Start Round 2" Width="180" Height="44" Margin="0,12,0,0" HorizontalAlignment="Center" Style="{StaticResource PrimaryButton}" />
+                </StackPanel>
+              </Border>
+
+              <Border x:Name="GameOverOverlay" Background="#E61A1A1A" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Center" Width="340" Height="260" Visibility="Collapsed">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                  <TextBlock Text="Game Over" FontSize="36" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" Margin="0,6,0,6" />
+                  <TextBlock x:Name="FinalScoreText" Text="Final Score: 0" Foreground="{StaticResource SubtleText}" HorizontalAlignment="Center" Margin="0,6,0,6" />
+                  <Button x:Name="RestartButton" Content="Restart" Width="160" Height="44" Margin="0,12,0,0" HorizontalAlignment="Center" Style="{StaticResource PrimaryButton}" />
+                </StackPanel>
+              </Border>
+            </Grid>
+          </Border>
+
+          <TextBlock Grid.Row="2" Text="Tap the Cthulhu to squish!" Foreground="{StaticResource SubtleText}" HorizontalAlignment="Center" Margin="0,12,0,0" />
+        </Grid>
+      </Border>
+    </Grid>
+  </Grid>
+</Window>
