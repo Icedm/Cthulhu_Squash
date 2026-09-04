@@ -1,6 +1,7 @@
 <Window x:Class="CthulhuSquish.MainWindow"
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:gif="http://wpfanimatedgif.codeplex.com"
   Title="Cthulhu Squish" Height="720" Width="480"
   Background="{StaticResource AppBackground}" FontFamily="{StaticResource UiFont}">
 
@@ -90,7 +91,7 @@
                   </Rectangle.Height>
                 </Rectangle>
 
-                <Image x:Name="CthulhuImage" Width="75" Height="75" Cursor="Hand" Visibility="Hidden" Style="{StaticResource SpriteImageStyle}" />
+                <Image x:Name="CthulhuImage" Width="120" Height="120" Cursor="Hand" Visibility="Hidden" Style="{StaticResource SpriteImageStyle}" gif:ImageBehavior.RepeatBehavior="Forever" />
               </Canvas>
 
               <Border x:Name="StartOverlay" Background="#CC071428" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Center" Width="320" Height="260">
@@ -115,6 +116,15 @@
                   <TextBlock Text="Game Over" FontSize="36" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" Margin="0,6,0,6" />
                   <TextBlock x:Name="FinalScoreText" Text="Final Score: 0" Foreground="{StaticResource SubtleText}" HorizontalAlignment="Center" Margin="0,6,0,6" />
                   <Button x:Name="RestartButton" Content="Restart" Width="160" Height="44" Margin="0,12,0,0" HorizontalAlignment="Center" Style="{StaticResource PrimaryButton}" />
+                </StackPanel>
+              </Border>
+
+              <!-- Countdown overlay before game starts -->
+              <Border x:Name="CountdownOverlay" Background="#CC071428" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Center" Width="320" Height="300" Visibility="Collapsed">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                  <TextBlock Text="Get Ready!" FontFamily="{StaticResource DisplayFont}" FontSize="32" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" Margin="0,6,0,12" />
+                  <TextBlock Text="Reach 20 points to unlock Round 2" TextWrapping="Wrap" Foreground="{StaticResource SubtleText}" Margin="18" HorizontalAlignment="Center" TextAlignment="Center"/>
+                  <TextBlock x:Name="CountdownText" Text="5" FontSize="64" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" Margin="0,12,0,12" />
                 </StackPanel>
               </Border>
             </Grid>

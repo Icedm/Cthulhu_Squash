@@ -9,4 +9,7 @@
   <ItemGroup>
     <None Include="Resources\**\*" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
+  </ItemGroup>
 </Project>

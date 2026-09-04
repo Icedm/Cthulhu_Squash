@@ -7,6 +7,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using System.Diagnostics;
+using WpfAnimatedGif;
 
 namespace CthulhuSquish;
 
@@ -14,12 +16,14 @@ public partial class MainWindow : Window
 {
     int score = 0;
     Random rand = new Random();
-    double imageWidth = 75;
-    double imageHeight = 75;
+    double imageWidth = 120;
+    double imageHeight = 120;
     DispatcherTimer movementTimer;
     DispatcherTimer countdownTimer;
+    DispatcherTimer preGameCountdownTimer;
     MediaPlayer player = new MediaPlayer();
     bool gameStarted = false;
+    int preGameCountdown = 5;
 
     // continuous movement / bouncing
     double vx = 0; // pixels per second
@@ -37,11 +41,8 @@ public partial class MainWindow : Window
         InitializeComponent();
 
         // Load image if present
-        var imagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Images", "cthulhu.png");
-        if (File.Exists(imagePath))
-        {
-            CthulhuImage.Source = new BitmapImage(new Uri(imagePath));
-        }
+        var imagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Images", "cthulhu-horror.gif");
+        LoadAnimatedGif(CthulhuImage, imagePath);
 
         // Load sound if present
         var soundPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Raw", "Slime-squish-sound-effect.mp3");
@@ -68,12 +69,36 @@ public partial class MainWindow : Window
         countdownTimer.Interval = TimeSpan.FromSeconds(1);
         countdownTimer.Tick += CountdownTimer_Tick;
 
+        preGameCountdownTimer = new DispatcherTimer();
+        preGameCountdownTimer.Interval = TimeSpan.FromSeconds(1);
+        preGameCountdownTimer.Tick += PreGameCountdownTimer_Tick;
+
         RestartButton.Click += RestartButton_Click;
     }
 
     void OnLoaded(object sender, RoutedEventArgs e)
     {
         CenterSprite();
+    }
+
+    void LoadAnimatedGif(Image image, string path)
+    {
+        if (!File.Exists(path))
+            return;
+
+        try
+        {
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.UriSource = new Uri(path, UriKind.Absolute);
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.EndInit();
+            ImageBehavior.SetAnimatedSource(image, bitmap);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error loading GIF: {ex.Message}");
+        }
     }
 
     void MovementTimer_Tick(object? sender, EventArgs e)
@@ -162,11 +187,8 @@ public partial class MainWindow : Window
         round = 2;
         // increase speed and switch image
         speed = Math.Round(speed * 1.6);
-        var altPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Images", "cthulhu_alt.png");
-        if (File.Exists(altPath))
-        {
-            CthulhuImage.Source = new BitmapImage(new Uri(altPath));
-        }
+        var altPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Images", "cthulhu-horror.gif");
+        LoadAnimatedGif(CthulhuImage, altPath);
 
         // reset timer for round 2 and resume
         timeLeft = 30;
@@ -197,8 +219,8 @@ public partial class MainWindow : Window
         gameStarted = false;
         round = 1;
         speed = baseSpeed;
-        var defaultPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Images", "cthulhu.png");
-        if (File.Exists(defaultPath)) CthulhuImage.Source = new BitmapImage(new Uri(defaultPath));
+        var defaultPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Images", "cthulhu-horror.gif");
+        LoadAnimatedGif(CthulhuImage, defaultPath);
         timeLeft = 30;
         TimeText.Text = timeLeft.ToString();
         score = 0;
@@ -305,22 +327,38 @@ public partial class MainWindow : Window
     void StartButton_Click(object sender, RoutedEventArgs e)
     {
         StartOverlay.Visibility = Visibility.Collapsed;
-        CthulhuImage.Visibility = Visibility.Visible;
-        gameStarted = true;
-        score = 0;
-        ScoreText.Text = "0";
-        CenterSprite();
+        CountdownOverlay.Visibility = Visibility.Visible;
+        preGameCountdown = 5;
+        CountdownText.Text = preGameCountdown.ToString();
+        preGameCountdownTimer.Start();
+    }
 
-        // initialize random velocity
-        double angle = rand.NextDouble() * Math.PI * 2;
-        vx = Math.Cos(angle) * speed;
-        vy = Math.Sin(angle) * speed;
+    void PreGameCountdownTimer_Tick(object? sender, EventArgs e)
+    {
+        preGameCountdown--;
+        CountdownText.Text = preGameCountdown.ToString();
 
-        lastTick = DateTime.UtcNow;
-        movementTimer.Start();
-        // start countdown
-        timeLeft = 30;
-        TimeText.Text = timeLeft.ToString();
-        countdownTimer.Start();
+        if (preGameCountdown <= 0)
+        {
+            preGameCountdownTimer.Stop();
+            CountdownOverlay.Visibility = Visibility.Collapsed;
+            CthulhuImage.Visibility = Visibility.Visible;
+            gameStarted = true;
+            score = 0;
+            ScoreText.Text = "0";
+            CenterSprite();
+
+            // initialize random velocity
+            double angle = rand.NextDouble() * Math.PI * 2;
+            vx = Math.Cos(angle) * speed;
+            vy = Math.Sin(angle) * speed;
+
+            lastTick = DateTime.UtcNow;
+            movementTimer.Start();
+            // start countdown
+            timeLeft = 30;
+            TimeText.Text = timeLeft.ToString();
+            countdownTimer.Start();
+        }
     }
 }
